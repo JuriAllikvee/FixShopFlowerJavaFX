@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.2"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.FlowerShop.controller.MenuFormController">
+
+    <MenuBar>
+        <menus>
+            <Menu fx:id="mProducts" text="Товары">
+                <items>
+                    <MenuItem fx:id="miAddProduct" text="Добавить товар" onAction="#showNewProductForm"/>
+                    <MenuItem fx:id="miProductList" text="Список товаров" onAction="#showProductListForm"/>
+                </items>
+            </Menu>
+
+            <Menu fx:id="mOrders" text="Заказы">
+                <items>
+                    <MenuItem fx:id="miAddOrder" text="Создать заказ" onAction="#showNewOrderForm"/>
+
+                </items>
+            </Menu>
+
+            <Menu fx:id="mCustomers" text="Покупатели">
+                <items>
+                    <MenuItem fx:id="miAddCustomer" text="Добавить покупателя" onAction="#showNewCustomerForm"/>
+                    <MenuItem fx:id="miCustomerList" text="Список покупателей" onAction="#showCustomerListForm"/>
+                </items>
+            </Menu>
+
+            <Menu fx:id="mAdmin" text="Администратор">
+                <items>
+                    <MenuItem text="Управление пользователями"/>
+                </items>
+            </Menu>
+
+            <Menu text="Пользователь">
+                <items>
+                    <MenuItem text="Выход" onAction="#logout"/>
+                </items>
+            </Menu>
+        </menus>
+    </MenuBar>
+</VBox>
