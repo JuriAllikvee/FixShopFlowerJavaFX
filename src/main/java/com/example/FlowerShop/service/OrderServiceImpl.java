@@ -8,7 +8,6 @@ import com.example.FlowerShop.repository.CustomerRepository;
 import com.example.FlowerShop.repository.OrderRepository;
 import com.example.FlowerShop.repository.ProductRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +18,9 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository,
+                            CustomerRepository customerRepository,
+                            ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
@@ -27,13 +28,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order create(Order order) {
-        Customer customer = order.getCustomer();
-        Product product = order.getProduct();
-        int quantity = order.getQuantity();
-        double totalCost = product.getPrice() * quantity;
-
-
-        // Создаем заказ
         return orderRepository.save(order);
     }
 
@@ -50,5 +44,37 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void delete(Long id) {
         orderRepository.deleteById(id);
+    }
+
+    /**
+     * Создает заказ, если:
+     * - Количество товара достаточно
+     * - У покупателя достаточно средств для покупки
+     * Если заказ успешно создан, баланс покупателя уменьшается,
+     * количество товара обновляется и возвращается true.
+     * Иначе возвращается false.
+     */
+    @Override
+    public boolean createOrder(Customer customer, Product product, int quantity) {
+        // Проверяем, достаточно ли товара для заказа
+        if (product.getQuantity() < quantity) {
+            return false;
+        }
+        double totalCost = product.getPrice() * quantity;
+        // Проверяем, достаточно ли средств у покупателя
+        if (customer.getBalance() < totalCost) {
+            return false;
+        }
+        // Создаем заказ
+        Order order = new Order(customer, product, quantity);
+        // Уменьшаем количество товара на складе
+        product.setQuantity(product.getQuantity() - quantity);
+        productRepository.save(product);
+        // Уменьшаем баланс покупателя
+        customer.setBalance(customer.getBalance() - totalCost);
+        customerRepository.save(customer);
+        // Сохраняем заказ
+        orderRepository.save(order);
+        return true;
     }
 }

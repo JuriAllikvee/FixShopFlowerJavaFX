@@ -1,7 +1,6 @@
 package com.example.FlowerShop.model;
 
 import jakarta.persistence.*;
-
 import java.util.Objects;
 
 @Entity
@@ -19,7 +18,7 @@ public class Customer {
     private String address;
 
     @Column(nullable = false)
-    private double balance; // ✅ Баланс покупателя
+    private double balance; // <-- ВАЖНО: поле для хранения баланса
 
     public Customer() {}
 
@@ -28,6 +27,7 @@ public class Customer {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.balance = 0.0; // или 1000 по умолчанию
     }
 
     public Long getId() { return id; }
@@ -35,6 +35,7 @@ public class Customer {
     public String getEmail() { return email; }
     public String getPhoneNumber() { return phoneNumber; }
     public String getAddress() { return address; }
+    public double getBalance() { return balance; } // <-- Геттер для баланса
 
     public void setId(Long id) { this.id = id; }
     public void setName(String name) { this.name = name; }
@@ -43,26 +44,16 @@ public class Customer {
     public void setAddress(String address) { this.address = address; }
     public void setBalance(double balance) { this.balance = balance; }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Customer)) return false;
         Customer customer = (Customer) o;
-        return Objects.equals(id, customer.id) &&
-                Objects.equals(name, customer.name) &&
-                Objects.equals(email, customer.email) &&
-                Objects.equals(phoneNumber, customer.phoneNumber) &&
-                Objects.equals(address, customer.address);
+        return Objects.equals(id, customer.id) && Objects.equals(email, customer.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, phoneNumber, address);
-    }
-
-    @Override
-    public String toString() {
-        return name + " (" + email + ")";
+        return Objects.hash(id, email);
     }
 }

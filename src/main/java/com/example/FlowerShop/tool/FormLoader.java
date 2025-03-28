@@ -23,7 +23,6 @@ public class FormLoader {
         this.springFXMLLoader = springFXMLLoader;
     }
 
-    // ✅ Метод для получения springFXMLLoader
     public SpringFXMLLoader getSpringFXMLLoader() {
         return springFXMLLoader;
     }
@@ -35,6 +34,10 @@ public class FormLoader {
     public void loadMainForm() {
         loadForm("/main/mainForm.fxml", "Главное окно магазина цветов");
     }
+    public void loadUserMainForm() {
+        loadForm("/user/userMainForm.fxml", "Окно пользователя");
+    }
+
 
     public void loadLoginForm() {
         loadForm("/user/loginForm.fxml", "Вход в систему");

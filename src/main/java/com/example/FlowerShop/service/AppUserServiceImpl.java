@@ -9,10 +9,14 @@ import java.util.Optional;
 @Service
 public class AppUserServiceImpl {
 
+    // Пример enum ролей
     public enum ROLES {
-        ADMINISTRATOR, MANAGER, USER
+        ADMINISTRATOR, // Можно считать "администратор"
+        MANAGER,
+        USER
     }
 
+    // Статическое поле, куда сохраняется текущий пользователь после логина
     public static AppUser currentUser;
 
     private final AppUserRepository appUserRepository;
@@ -27,5 +31,9 @@ public class AppUserServiceImpl {
 
     public Optional<AppUser> findByUsername(String username){
         return appUserRepository.findByUsername(username);
+    }
+
+    public AppUser getCurrentUser() {
+        return currentUser;
     }
 }

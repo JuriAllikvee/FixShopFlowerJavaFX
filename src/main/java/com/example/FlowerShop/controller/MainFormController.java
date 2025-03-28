@@ -1,17 +1,23 @@
 package com.example.FlowerShop.controller;
 
 import com.example.FlowerShop.interfaces.OrderService;
+import com.example.FlowerShop.model.Customer;
 import com.example.FlowerShop.model.Order;
+import com.example.FlowerShop.model.Product;
 import com.example.FlowerShop.tool.FormLoader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +31,7 @@ public class MainFormController implements Initializable {
 
     private final OrderService orderService;
     private final FormLoader formLoader;
+    private Customer loggedInCustomer;
 
     @FXML private VBox menuContainer;
     @FXML private TableView<Order> tvOrderList;
@@ -46,10 +53,10 @@ public class MainFormController implements Initializable {
         refreshOrders();
     }
 
-    @FXML
-    private void showNewOrderForm() {
-        formLoader.loadNewOrderForm();
+    public void setLoggedInCustomer(Customer customer) {
+        this.loggedInCustomer = customer;
     }
+
 
     private void loadMenu() {
         try {
@@ -81,4 +88,43 @@ public class MainFormController implements Initializable {
         ObservableList<Order> observableList = FXCollections.observableArrayList(orders);
         tvOrderList.setItems(observableList);
     }
+    @FXML
+    private void showProductDetails(Product selectedProduct) {
+        if (selectedProduct == null) {
+            return;
+        }
+        try {
+            // Загружаем FXML
+            FXMLLoader loader = formLoader.getSpringFXMLLoader().load("/fxml/ModalProductDetailsForm.fxml");
+            // Обратите внимание, что load(...) может вернуть не сам контроллер, а объект типа Parent,
+            // поэтому сначала получаем корень сцены:
+            Parent root = loader.load();
+
+            // Получаем контроллер из Loader
+            ModalProductDetailsFormController controller = loader.getController();
+
+            // Допустим, вы как-то получаете текущего пользователя:
+            // Customer loggedInCustomer = userSessionService.getLoggedInCustomer(); (пример)
+
+            // Передаём данные в модальное окно
+            controller.setData(selectedProduct, loggedInCustomer, orderService, this::refreshOrders);
+
+            // Создаём новое окно (Stage)
+            Stage modalStage = new Stage();
+            modalStage.setTitle("Детали товара");
+            modalStage.setScene(new Scene(root));
+
+            // Делаем окно модальным
+            modalStage.initModality(Modality.WINDOW_MODAL);
+            // Если нужно заблокировать взаимодействие с главным окном:
+            // modalStage.initOwner(tvOrderList.getScene().getWindow());
+
+            // Отображаем и ждём, пока пользователь закроет окно
+            modalStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
