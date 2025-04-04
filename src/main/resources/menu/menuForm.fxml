@@ -5,42 +5,47 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/23.0.2"
+<VBox xmlns="http://javafx.com/javafx/23.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.FlowerShop.controller.MenuFormController">
-
     <MenuBar>
         <menus>
             <Menu fx:id="mProducts" text="Товары">
                 <items>
-                    <MenuItem fx:id="miAddProduct" text="Добавить товар" onAction="#showNewProductForm"/>
-                    <MenuItem fx:id="miProductList" text="Список товаров" onAction="#showProductListForm"/>
+                    <MenuItem fx:id="miAddProduct" onAction="#showNewProductForm" text="Добавить товар" />
+                    <MenuItem fx:id="miProductList" onAction="#showProductListForm" text="Список товаров" />
                 </items>
             </Menu>
 
             <Menu fx:id="mOrders" text="Заказы">
                 <items>
-                    <MenuItem fx:id="miAddOrder" text="Создать заказ" onAction="#showNewOrderForm"/>
-
+                    <MenuItem fx:id="miAddOrder" onAction="#showNewOrderForm" text="Создать заказ" />
                 </items>
             </Menu>
 
             <Menu fx:id="mCustomers" text="Покупатели">
                 <items>
-                    <MenuItem fx:id="miAddCustomer" text="Добавить покупателя" onAction="#showNewCustomerForm"/>
-                    <MenuItem fx:id="miCustomerList" text="Список покупателей" onAction="#showCustomerListForm"/>
+                    <MenuItem fx:id="miAddCustomer" onAction="#showNewCustomerForm" text="Добавить покупателя" />
+                    <MenuItem fx:id="miCustomerList" onAction="#showCustomerListForm" text="Список покупателей" />
                 </items>
             </Menu>
 
             <Menu fx:id="mAdmin" text="Администратор">
                 <items>
-                    <MenuItem text="Управление пользователями"/>
+                    <MenuItem text="Управление пользователями" onAction="#showUserManagementForm"/>
                 </items>
             </Menu>
 
-            <Menu text="Пользователь">
+            <!-- Новое меню "Просмотр" -->
+            <Menu fx:id="mView" text="Просмотр">
                 <items>
-                    <MenuItem text="Выход" onAction="#logout"/>
+                    <MenuItem text="Просмотр отчетов" onAction="#showReports"/>
+                </items>
+            </Menu>
+
+            <Menu text="Выход">
+                <items>
+                    <MenuItem onAction="#logout" text="Выход" />
                 </items>
             </Menu>
         </menus>

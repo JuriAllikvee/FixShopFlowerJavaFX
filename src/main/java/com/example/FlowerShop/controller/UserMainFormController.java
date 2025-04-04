@@ -183,27 +183,21 @@ public class UserMainFormController implements Initializable {
     @FXML
     private void openProfile() {
         try {
-            // Загружаем ProfileForm.fxml
             FXMLLoader loader = formLoader.getSpringFXMLLoader().load("/user/ProfileForm.fxml");
             Parent root = loader.load();
 
-            // Получаем контроллер
             ProfileFormController controller = loader.getController();
 
-            // Текущий пользователь
             AppUser user = appUserServiceImpl.getCurrentUser(); // например, так
             controller.setUser(user);
 
-            // Открываем окно
             Stage stage = new Stage();
             stage.setTitle("Мой профиль");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
-            // Чтобы форма была модальной, покажем поверх текущей сцены:
             stage.initOwner(fpCards.getScene().getWindow());
             stage.showAndWait();
 
-            // Если нужно, обновим товары после закрытия
             refreshProducts();
         } catch (IOException e) {
             e.printStackTrace();

@@ -18,7 +18,7 @@ public class Customer {
     private String address;
 
     @Column(nullable = false)
-    private double balance; // <-- ВАЖНО: поле для хранения баланса
+    private double balance;
 
     public Customer() {}
 
@@ -27,7 +27,7 @@ public class Customer {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.balance = 0.0; // или 1000 по умолчанию
+        this.balance = 0.0;
     }
 
     public Long getId() { return id; }
@@ -35,7 +35,7 @@ public class Customer {
     public String getEmail() { return email; }
     public String getPhoneNumber() { return phoneNumber; }
     public String getAddress() { return address; }
-    public double getBalance() { return balance; } // <-- Геттер для баланса
+    public double getBalance() { return balance; }
 
     public void setId(Long id) { this.id = id; }
     public void setName(String name) { this.name = name; }

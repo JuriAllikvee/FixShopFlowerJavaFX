@@ -39,12 +39,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer getCustomerByUser(AppUser user) {
-        // Предполагается, что в AppUser поле username содержит email
         Optional<Customer> customerOpt = customerRepository.findByEmail(user.getUsername());
         if (customerOpt.isPresent()) {
             return customerOpt.get();
         } else {
-            // Если покупатель не найден, создаём нового с начальным балансом 1000
             Customer customer = new Customer();
             customer.setName(user.getFirstname() + " " + user.getLastname());
             customer.setEmail(user.getUsername());

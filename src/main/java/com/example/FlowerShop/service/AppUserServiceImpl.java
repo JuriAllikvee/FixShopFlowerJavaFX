@@ -18,7 +18,6 @@ public class AppUserServiceImpl implements AppUserService {
         this.userRepository = userRepository;
     }
 
-    // --- Реализация AppService<AppUser> ---
     @Override
     public AppUser create(AppUser entity) {
         return userRepository.save(entity);
@@ -39,7 +38,6 @@ public class AppUserServiceImpl implements AppUserService {
         userRepository.deleteById(id);
     }
 
-    // --- Методы AppUserService ---
     @Override
     public Optional<AppUser> findByUsername(String username) {
         return userRepository.findByUsername(username);

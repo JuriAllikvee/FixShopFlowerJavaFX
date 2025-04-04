@@ -27,27 +27,22 @@ public class RegistrationFormController {
 
     @FXML
     private void registerUser() {
-        // 1. Создаём модель AppUser
         AppUser newUser = new AppUser();
         newUser.setFirstname(tfFirstname.getText());
         newUser.setLastname(tfLastname.getText());
         newUser.setUsername(tfUsername.getText());
         newUser.setPassword(pfPassword.getText());
 
-        // 2. Роль
         newUser.getRoles().add(AppUserService.ROLES.USER.name());
 
-        // 3. Сохраняем в базе
         appUserService.create(newUser);
 
-        // 4. Показываем пользователю, что всё успешно
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Регистрация");
         alert.setHeaderText(null);
         alert.setContentText("Пользователь \"" + newUser.getUsername() + "\" успешно зарегистрирован!");
         alert.showAndWait();
 
-        // 5. Переходим на форму логина, например:
         formLoader.loadLoginForm();
     }
 

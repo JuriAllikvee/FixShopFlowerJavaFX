@@ -29,7 +29,6 @@ public class Product {
         this.quantity = quantity;
     }
 
-    // --- GETTERS ---
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getCategory() { return category; }
@@ -37,7 +36,6 @@ public class Product {
     public int getQuantity() { return quantity; }
     public String getImagePath() { return imagePath; }
 
-    // --- SETTERS ---
     public void setId(Long id) { this.id = id; }
     public void setName(String name) { this.name = name; }
     public void setCategory(String category) { this.category = category; }
@@ -45,7 +43,6 @@ public class Product {
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
 
-    // --- equals/hashCode ---
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

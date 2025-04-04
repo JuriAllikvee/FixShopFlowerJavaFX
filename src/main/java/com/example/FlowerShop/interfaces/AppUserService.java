@@ -5,10 +5,6 @@ import com.example.FlowerShop.service.AppService;
 
 import java.util.Optional;
 
-/**
- * Интерфейс для работы с пользователями (AppUser).
- * Расширяет твой универсальный AppService<AppUser>.
- */
 public interface AppUserService extends AppService<AppUser> {
 
     enum ROLES {
@@ -16,12 +12,9 @@ public interface AppUserService extends AppService<AppUser> {
         MANAGER,
         USER
     }
-
     Optional<AppUser> findByUsername(String username);
-
     AppUser getCurrentUser();
     void setCurrentUser(AppUser user);
-
     AppUser updateUser(AppUser user);
 }
 

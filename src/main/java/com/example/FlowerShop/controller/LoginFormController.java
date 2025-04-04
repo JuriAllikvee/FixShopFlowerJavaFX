@@ -23,7 +23,7 @@ public class LoginFormController {
 
     public LoginFormController(FormLoader formLoader, AppUserService appUserService) {
         this.formLoader = formLoader;
-        this.appUserService = appUserService; // <-- внедряем интерфейс
+        this.appUserService = appUserService;
     }
     @FXML
     private void showRegistrationForm() {
@@ -42,13 +42,10 @@ public class LoginFormController {
             if (user.getPassword().equals(password)) {
                 appUserService.setCurrentUser(user);
 
-                // проверяем, является ли пользователь админом
                 boolean isAdmin = user.getRoles().contains(AppUserService.ROLES.ADMINISTRATOR.name());
                 if (isAdmin) {
-                    // загрузить форму для админа
                     formLoader.loadMainForm();
                 } else {
-                    // иначе форму для обычного пользователя
                     formLoader.loadUserMainForm();
                 }
             } else {

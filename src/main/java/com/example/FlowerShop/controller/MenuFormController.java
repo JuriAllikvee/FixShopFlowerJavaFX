@@ -39,7 +39,6 @@ public class MenuFormController implements Initializable {
     }
 
     private void configureMenuByRole() {
-        // Получаем текущего пользователя
         AppUser currentUser = appUserServiceImpl.getCurrentUser();
 
         // Если пользователь не авторизован — скрываем всё, кроме, возможно, базовых пунктов
@@ -51,25 +50,19 @@ public class MenuFormController implements Initializable {
             return;
         }
 
-        // Проверяем роли. Предполагаем, что в БД у пользователя лежит, например, "ADMINISTRATOR"
-        // (или "MANAGER", "USER") в поле roles.
+
         boolean isAdmin = currentUser.getRoles().contains(AppUserServiceImpl.ROLES.ADMINISTRATOR.name());
         boolean isManager = currentUser.getRoles().contains(AppUserServiceImpl.ROLES.MANAGER.name());
 
-        // Меню "Администрирование" видно только администратору
         mAdmin.setVisible(isAdmin);
 
-        // Покупатели и создание заказов — для администратора и менеджера
         mCustomers.setVisible(isAdmin || isManager);
         miAddCustomer.setVisible(isAdmin || isManager);
         miAddOrder.setVisible(isAdmin || isManager);
 
-        // Если хотите показать что-то только пользователю (USER), проверьте:
-        // boolean isUser = currentUser.getRoles().contains(AppUserServiceImpl.ROLES.USER.name());
-        // ...
+
     }
 
-    // Прочие методы:
     @FXML
     private void showNewProductForm() {
         formLoader.loadNewProductForm();
@@ -98,5 +91,13 @@ public class MenuFormController implements Initializable {
     @FXML
     private void showCustomerListForm() {
         formLoader.loadCustomerListForm();
+    }
+    @FXML
+    private void showUserManagementForm() {
+        formLoader.loadUserManagementForm();
+    }
+    @FXML
+    private void showReports() {
+        formLoader.loadReportsForm();
     }
 }

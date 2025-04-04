@@ -8,6 +8,8 @@ import com.example.FlowerShop.repository.CustomerRepository;
 import com.example.FlowerShop.repository.OrderRepository;
 import com.example.FlowerShop.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,35 +48,29 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.deleteById(id);
     }
 
-    /**
-     * Создает заказ, если:
-     * - Количество товара достаточно
-     * - У покупателя достаточно средств для покупки
-     * Если заказ успешно создан, баланс покупателя уменьшается,
-     * количество товара обновляется и возвращается true.
-     * Иначе возвращается false.
-     */
+
     @Override
     public boolean createOrder(Customer customer, Product product, int quantity) {
-        // Проверяем, достаточно ли товара для заказа
         if (product.getQuantity() < quantity) {
             return false;
         }
         double totalCost = product.getPrice() * quantity;
-        // Проверяем, достаточно ли средств у покупателя
         if (customer.getBalance() < totalCost) {
             return false;
         }
-        // Создаем заказ
         Order order = new Order(customer, product, quantity);
-        // Уменьшаем количество товара на складе
         product.setQuantity(product.getQuantity() - quantity);
         productRepository.save(product);
-        // Уменьшаем баланс покупателя
         customer.setBalance(customer.getBalance() - totalCost);
         customerRepository.save(customer);
-        // Сохраняем заказ
         orderRepository.save(order);
         return true;
+    }
+
+
+    @Override
+    public double calculateRevenueBetween(LocalDate startDate, LocalDate endDate) {
+        Double revenue = orderRepository.findTotalRevenueBetween(startDate, endDate);
+        return revenue != null ? revenue : 0.0;
     }
 }

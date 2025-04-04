@@ -3,12 +3,15 @@ package com.example.FlowerShop.tool;
 import com.example.FlowerShop.FlowerShopApplication;
 import com.example.FlowerShop.controller.EditCustomerFormController;
 import com.example.FlowerShop.controller.EditProductFormController;
+import com.example.FlowerShop.controller.EditUserFormController;
+import com.example.FlowerShop.model.AppUser;
 import com.example.FlowerShop.model.Customer;
 import com.example.FlowerShop.model.Order;
 import com.example.FlowerShop.model.Product;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.stereotype.Service;
 
@@ -109,6 +112,54 @@ public class FormLoader {
         stage.centerOnScreen();
         stage.show();
     }
+    public void loadEditUserForm(AppUser user) {
+        try {
+            FXMLLoader loader = getSpringFXMLLoader().load("/user/EditUserForm.fxml");
+            Parent root = loader.load();
+            EditUserFormController controller = loader.getController();
+            controller.setUser(user);
+
+            Stage stage = new Stage();
+            stage.setTitle("Редактирование пользователя");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(getPrimaryStage());
+            stage.showAndWait();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadUserManagementForm() {
+        try {
+            FXMLLoader loader = getSpringFXMLLoader().load("/user/UserManagementForm.fxml");
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Управление пользователями");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadReportsForm() {
+        try {
+            FXMLLoader loader = getSpringFXMLLoader().load("/fxml/RevenueForm.fxml");
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Просмотр отчетов");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
     private Stage getPrimaryStage() {
         if (FlowerShopApplication.primaryStage == null) {
