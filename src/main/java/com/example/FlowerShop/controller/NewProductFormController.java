@@ -4,9 +4,14 @@ import com.example.FlowerShop.model.Product;
 import com.example.FlowerShop.tool.FormLoader;
 import com.example.FlowerShop.service.AppService;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
 
 @Component
 public class NewProductFormController {
@@ -18,10 +23,28 @@ public class NewProductFormController {
     @FXML private TextField tfCategory;
     @FXML private TextField tfPrice;
     @FXML private TextField tfQuantity;
+    @FXML private ImageView productImageView;
+
+    private File selectedImageFile;
 
     public NewProductFormController(AppService<Product> productService, FormLoader formLoader) {
         this.productService = productService;
         this.formLoader = formLoader;
+    }
+
+    @FXML
+    private void chooseImage() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Выберите изображение");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+        );
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            selectedImageFile = file;
+            Image image = new Image(file.toURI().toString());
+            productImageView.setImage(image);
+        }
     }
 
     @FXML
@@ -37,10 +60,15 @@ public class NewProductFormController {
             }
 
             Product product = new Product(name, category, price, quantity);
+            if (selectedImageFile != null) {
+                product.setImagePath(selectedImageFile.getAbsolutePath());
+            } else {
+                product.setImagePath("default"); // используем "default" как флаг
+            }
+
             productService.create(product);
 
             showSuccessAlert("Товар добавлен", "Товар \"" + name + "\" успешно добавлен.");
-
             formLoader.loadMainForm();
 
         } catch (NumberFormatException e) {

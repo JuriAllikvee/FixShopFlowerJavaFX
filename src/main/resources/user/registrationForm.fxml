@@ -6,7 +6,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/23.0.2"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.example.FlowerShop.controller.RegistrationFromController"
+      fx:controller="com.example.FlowerShop.controller.RegistrationFormController"
       spacing="10" alignment="CENTER" prefHeight="400" prefWidth="350"
       style="-fx-background-color: #ffffff; -fx-padding: 20;">
 

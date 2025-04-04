@@ -33,8 +33,6 @@
         <padding>
             <Insets top="10" right="20" bottom="10" left="20"/>
         </padding>
-        <Button fx:id="btnNewOrder" onAction="#showNewOrderForm" text="Новый заказ"
-                style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14; -fx-padding: 8 15;" />
 
     </HBox>
 

@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 
+<?import javafx.scene.image.ImageView?>
 <VBox xmlns="http://javafx.com/javafx/23.0.2"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.FlowerShop.controller.NewProductFormController"
@@ -17,6 +18,9 @@
     <TextField fx:id="tfCategory" promptText="Категория"/>
     <TextField fx:id="tfPrice" promptText="Цена"/>
     <TextField fx:id="tfQuantity" promptText="Количество"/>
+    <ImageView fx:id="productImageView" fitHeight="150" fitWidth="150" preserveRatio="true" />
+    <Button text="Загрузить изображение" onAction="#chooseImage"/>
+
 
     <Button text="Сохранить" onAction="#saveProduct"
             style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14; -fx-padding: 8 15;"/>

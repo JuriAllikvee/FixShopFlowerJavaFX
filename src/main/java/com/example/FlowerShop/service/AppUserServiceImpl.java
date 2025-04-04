@@ -1,39 +1,75 @@
 package com.example.FlowerShop.service;
 
+import com.example.FlowerShop.interfaces.AppUserService;
 import com.example.FlowerShop.model.AppUser;
 import com.example.FlowerShop.repository.AppUserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AppUserServiceImpl {
+public class AppUserServiceImpl implements AppUserService {
 
-    // Пример enum ролей
-    public enum ROLES {
-        ADMINISTRATOR, // Можно считать "администратор"
-        MANAGER,
-        USER
+    private static AppUser currentUser;
+    private final AppUserRepository userRepository;
+
+    public AppUserServiceImpl(AppUserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    // Статическое поле, куда сохраняется текущий пользователь после логина
-    public static AppUser currentUser;
-
-    private final AppUserRepository appUserRepository;
-
-    public AppUserServiceImpl(AppUserRepository appUserRepository) {
-        this.appUserRepository = appUserRepository;
+    // --- Реализация AppService<AppUser> ---
+    @Override
+    public AppUser create(AppUser entity) {
+        return userRepository.save(entity);
     }
 
-    public AppUser add(AppUser user){
-        return appUserRepository.save(user);
+    @Override
+    public Optional<AppUser> getById(Long id) {
+        return userRepository.findById(id);
     }
 
-    public Optional<AppUser> findByUsername(String username){
-        return appUserRepository.findByUsername(username);
+    @Override
+    public List<AppUser> getAll() {
+        return userRepository.findAll();
     }
 
+    @Override
+    public void delete(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    // --- Методы AppUserService ---
+    @Override
+    public Optional<AppUser> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
     public AppUser getCurrentUser() {
         return currentUser;
+    }
+
+    @Override
+    public void setCurrentUser(AppUser user) {
+        currentUser = user;
+    }
+
+    @Override
+    public AppUser updateUser(AppUser user) {
+        if (user.getId() == null) {
+            throw new IllegalArgumentException("Нельзя обновить AppUser без ID.");
+        }
+        return userRepository.save(user);
+    }
+
+    // --- Новый метод saveOrUpdate ---
+    /**
+     * Метод, объединяющий логику создания/обновления.
+     * Если у user есть ID, Spring Data JPA сделает UPDATE,
+     * иначе — INSERT (create).
+     */
+    public AppUser saveOrUpdate(AppUser user) {
+        return userRepository.save(user);
     }
 }

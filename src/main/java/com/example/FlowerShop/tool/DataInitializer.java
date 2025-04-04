@@ -19,7 +19,7 @@ public class DataInitializer {
                 admin.setUsername("admin");
                 admin.setPassword("12345");
                 admin.getRoles().add(AppUserServiceImpl.ROLES.ADMINISTRATOR.toString());
-                appUserServiceImpl.add(admin);
+                appUserServiceImpl.create(admin);
                 System.out.println("Администратор успешно зашёл.");
             }
         };

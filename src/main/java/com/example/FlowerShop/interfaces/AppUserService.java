@@ -1,4 +1,27 @@
 package com.example.FlowerShop.interfaces;
 
-public interface AppUserService {
+import com.example.FlowerShop.model.AppUser;
+import com.example.FlowerShop.service.AppService;
+
+import java.util.Optional;
+
+/**
+ * Интерфейс для работы с пользователями (AppUser).
+ * Расширяет твой универсальный AppService<AppUser>.
+ */
+public interface AppUserService extends AppService<AppUser> {
+
+    enum ROLES {
+        ADMINISTRATOR,
+        MANAGER,
+        USER
+    }
+
+    Optional<AppUser> findByUsername(String username);
+
+    AppUser getCurrentUser();
+    void setCurrentUser(AppUser user);
+
+    AppUser updateUser(AppUser user);
 }
+

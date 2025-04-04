@@ -13,25 +13,19 @@
       spacing="10" alignment="CENTER" prefWidth="400" prefHeight="250"
       style="-fx-background-color: #FFFFFF; -fx-padding: 20;">
 
-    <!-- Заголовок с названием товара -->
     <Label fx:id="lblProductName" style="-fx-font-size: 16; -fx-font-weight: bold;" text="Название товара" />
 
-    <!-- Категория -->
     <Label fx:id="lblCategory" text="Категория: ..." />
 
-    <!-- Цена -->
     <Label fx:id="lblPrice" text="Цена: 0.0" />
 
-    <!-- Доступное количество на складе -->
     <Label fx:id="lblAvailableQuantity" text="В наличии: 0" />
 
-    <!-- Поле для ввода желаемого количества -->
     <HBox spacing="10" alignment="CENTER">
         <Label text="Количество:"/>
         <TextField fx:id="tfQuantityToBuy" text="1" prefWidth="60"/>
     </HBox>
 
-    <!-- Кнопки "Купить" и "Отмена" -->
     <HBox spacing="20" alignment="CENTER">
         <Button fx:id="btnBuy" text="Купить" />
         <Button fx:id="btnCancel" text="Отмена" />

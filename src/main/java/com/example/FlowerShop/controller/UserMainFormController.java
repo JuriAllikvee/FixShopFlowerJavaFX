@@ -3,6 +3,7 @@ package com.example.FlowerShop.controller;
 import com.example.FlowerShop.interfaces.CustomerService;
 import com.example.FlowerShop.interfaces.OrderService;
 import com.example.FlowerShop.interfaces.ProductService;
+import com.example.FlowerShop.model.AppUser;
 import com.example.FlowerShop.model.Customer;
 import com.example.FlowerShop.model.Product;
 import com.example.FlowerShop.service.AppUserServiceImpl;
@@ -13,12 +14,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -30,6 +34,9 @@ public class UserMainFormController implements Initializable {
     @FXML private Label lblBalance;
     @FXML private FlowPane fpCards;
     @FXML private Button btnRefresh;
+    @FXML private Button btnLogout;
+    @FXML private Button btnProfile;
+
 
     private final ProductService productService;
     private final OrderService orderService;
@@ -37,13 +44,16 @@ public class UserMainFormController implements Initializable {
     private final CustomerService customerService;
     private final FormLoader formLoader;
 
+
     private Customer currentCustomer;
 
-    public UserMainFormController(ProductService productService,
-                                  OrderService orderService,
-                                  AppUserServiceImpl appUserServiceImpl,
-                                  CustomerService customerService,
-                                  FormLoader formLoader) {
+    public UserMainFormController(
+            ProductService productService,
+            OrderService orderService,
+            AppUserServiceImpl appUserServiceImpl,
+            CustomerService customerService,
+            FormLoader formLoader
+    ) {
         this.productService = productService;
         this.orderService = orderService;
         this.appUserServiceImpl = appUserServiceImpl;
@@ -53,43 +63,87 @@ public class UserMainFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Получаем текущего покупателя
         currentCustomer = customerService.getCustomerByUser(appUserServiceImpl.getCurrentUser());
         updateBalanceLabel();
 
+        // Действие на кнопку "Обновить"
         btnRefresh.setOnAction(e -> refreshProducts());
 
+        // Подгружаем товары при запуске
         refreshProducts();
     }
 
     private void refreshProducts() {
         fpCards.getChildren().clear();
         List<Product> products = productService.getAll();
+
+        // Для каждого товара создаём карточку
         for (Product product : products) {
             VBox card = createProductCard(product);
             fpCards.getChildren().add(card);
         }
+
+        // Ещё раз получаем обновлённого Customer (на всякий случай)
         currentCustomer = customerService.getCustomerByUser(appUserServiceImpl.getCurrentUser());
         updateBalanceLabel();
     }
 
-
     private VBox createProductCard(Product product) {
-        VBox card = new VBox(5);
-        card.setStyle("-fx-padding: 10; -fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;");
+        VBox card = new VBox(8);
+        card.setStyle("""
+        -fx-background-color: #fff;
+        -fx-padding: 16;
+        -fx-spacing: 10;
+        -fx-border-color: #ddd;
+        -fx-border-radius: 10;
+        -fx-background-radius: 10;
+        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 2, 2);
+    """);
+
+        Image image;
+        try {
+            if (product.getImagePath() != null
+                    && !product.getImagePath().equalsIgnoreCase("default")
+                    && new File(product.getImagePath()).exists()) {
+                image = new Image(
+                        new File(product.getImagePath()).toURI().toString(),
+                        0, 0, true, true, false
+                );
+            } else {
+                image = new Image(getClass().getResource("/img/noimg.png").toExternalForm());
+            }
+        } catch (Exception e) {
+            System.err.println("Ошибка загрузки изображения: " + e.getMessage());
+            image = new Image(getClass().getResource("/img/noimg.png").toExternalForm());
+        }
+
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(120);
+        imageView.setFitHeight(120);
+        imageView.setPreserveRatio(true);
 
         Label lblName = new Label(product.getName());
-        lblName.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+        lblName.setStyle("-fx-font-weight: bold; -fx-font-size: 16;");
 
         Label lblCategory = new Label("Категория: " + product.getCategory());
         Label lblPrice = new Label("Цена: " + product.getPrice());
         Label lblQuantity = new Label("В наличии: " + product.getQuantity());
 
         Button btnBuy = new Button("Купить");
+        btnBuy.setStyle("""
+        -fx-background-color: #27ae60;
+        -fx-text-fill: white;
+        -fx-font-weight: bold;
+        -fx-padding: 6 20;
+        -fx-background-radius: 5;
+    """);
         btnBuy.setOnAction(e -> handleBuy(product));
 
-        card.getChildren().addAll(lblName, lblCategory, lblPrice, lblQuantity, btnBuy);
+        card.getChildren().addAll(imageView, lblName, lblCategory, lblPrice, lblQuantity, btnBuy);
         return card;
     }
+
 
     private void handleBuy(Product product) {
         try {
@@ -97,10 +151,7 @@ public class UserMainFormController implements Initializable {
             Parent root = loader.load();
 
             ModalProductDetailsFormController controller = loader.getController();
-
-            controller.setData(product, currentCustomer, orderService, () -> {
-                refreshProducts();
-            });
+            controller.setData(product, currentCustomer, orderService, this::refreshProducts);
 
             Stage modalStage = new Stage();
             modalStage.setTitle("Детали товара");
@@ -109,6 +160,51 @@ public class UserMainFormController implements Initializable {
             modalStage.initOwner(fpCards.getScene().getWindow());
             modalStage.showAndWait();
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void logout() {
+        try {
+            FXMLLoader loader = formLoader.getSpringFXMLLoader().load("/user/loginForm.fxml");
+            Parent root = loader.load();
+
+            Stage stage = (Stage) btnLogout.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Вход");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    private void openProfile() {
+        try {
+            // Загружаем ProfileForm.fxml
+            FXMLLoader loader = formLoader.getSpringFXMLLoader().load("/user/ProfileForm.fxml");
+            Parent root = loader.load();
+
+            // Получаем контроллер
+            ProfileFormController controller = loader.getController();
+
+            // Текущий пользователь
+            AppUser user = appUserServiceImpl.getCurrentUser(); // например, так
+            controller.setUser(user);
+
+            // Открываем окно
+            Stage stage = new Stage();
+            stage.setTitle("Мой профиль");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.WINDOW_MODAL);
+            // Чтобы форма была модальной, покажем поверх текущей сцены:
+            stage.initOwner(fpCards.getScene().getWindow());
+            stage.showAndWait();
+
+            // Если нужно, обновим товары после закрытия
+            refreshProducts();
         } catch (IOException e) {
             e.printStackTrace();
         }

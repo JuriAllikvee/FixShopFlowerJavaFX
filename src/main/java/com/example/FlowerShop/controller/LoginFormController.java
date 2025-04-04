@@ -1,5 +1,6 @@
 package com.example.FlowerShop.controller;
 
+import com.example.FlowerShop.interfaces.AppUserService;
 import com.example.FlowerShop.model.AppUser;
 import com.example.FlowerShop.service.AppUserServiceImpl;
 import com.example.FlowerShop.tool.FormLoader;
@@ -15,55 +16,39 @@ import java.util.Optional;
 public class LoginFormController {
 
     private final FormLoader formLoader;
-    private final AppUserServiceImpl appUserServiceImpl;
+    private final AppUserService appUserService;
 
-    @FXML
-    private TextField tfUsername;
+    @FXML private TextField tfUsername;
+    @FXML private PasswordField pfPassword;
 
-    @FXML
-    private PasswordField pfPassword;
-
-    public LoginFormController(FormLoader formLoader, AppUserServiceImpl appUserServiceImpl) {
+    public LoginFormController(FormLoader formLoader, AppUserService appUserService) {
         this.formLoader = formLoader;
-        this.appUserServiceImpl = appUserServiceImpl;
+        this.appUserService = appUserService; // <-- внедряем интерфейс
     }
-
-    @FXML
-    private void initialize() {
-        // Если нужно, можете добавить логику инициализации полей
-    }
-
     @FXML
     private void showRegistrationForm() {
         formLoader.loadRegistrationForm();
     }
 
+
     @FXML
     private void login() {
-        String username = tfUsername.getText();
-        String password = pfPassword.getText();
+        String username = tfUsername.getText().trim();
+        String password = pfPassword.getText().trim();
 
-        // Ищем пользователя по имени
-        Optional<AppUser> optionalUser = appUserServiceImpl.findByUsername(username);
-
+        Optional<AppUser> optionalUser = appUserService.findByUsername(username);
         if (optionalUser.isPresent()) {
             AppUser user = optionalUser.get();
-            // Проверяем пароль
             if (user.getPassword().equals(password)) {
-                // Сохраняем текущего пользователя в статическом поле
-                AppUserServiceImpl.currentUser = user;
+                appUserService.setCurrentUser(user);
 
-                // Проверяем, есть ли у пользователя роль "ADMINISTRATOR" (из enum)
-                // или, если у вас в базе хранится "ADMIN", меняем проверку на "ADMIN"
-                boolean isAdmin = user.getRoles().contains(AppUserServiceImpl.ROLES.ADMINISTRATOR.name());
-                // Или:
-                // boolean isAdmin = user.getRoles().contains("ADMIN");
-
-                // Если админ — грузим главное окно, иначе — окно пользователя
+                // проверяем, является ли пользователь админом
+                boolean isAdmin = user.getRoles().contains(AppUserService.ROLES.ADMINISTRATOR.name());
                 if (isAdmin) {
+                    // загрузить форму для админа
                     formLoader.loadMainForm();
                 } else {
-                    // Окно для обычного пользователя (нужно добавить метод loadUserMainForm)
+                    // иначе форму для обычного пользователя
                     formLoader.loadUserMainForm();
                 }
             } else {
@@ -74,14 +59,12 @@ public class LoginFormController {
         }
     }
 
-    /**
-     * Выводит Alert с ошибкой
-     */
-    private void showErrorAlert(String message) {
+
+    private void showErrorAlert(String msg) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка входа");
+        alert.setTitle("Ошибка");
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(msg);
         alert.showAndWait();
     }
 }
